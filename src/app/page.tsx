@@ -1,7 +1,7 @@
 // pages/create-user.tsx
 "use client";
 
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { Container, TextField, Button, Typography, Box } from "@mui/material";
 import { styled } from "@mui/system";
 import { createUser } from "@/browser/lib/users";
@@ -13,7 +13,7 @@ const CustomContainer = styled(Container)`
 export default function CreateUser() {
   const [username, setUsername] = useState("");
   const [tokenAmount, setTokenAmount] = useState("");
-  const [error, setError] = useState<string>(null); // [1
+  const [error, setError] = useState<string | null>(null); // [1
   const [user, setUser] = useState<{
     username: string;
     balance: number;
@@ -41,11 +41,17 @@ export default function CreateUser() {
       });
   };
 
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleCreateUser();
+  };
+
   return (
     <CustomContainer maxWidth="sm">
       <Box
         className="p-10 bg-white rounded mt-10 text-blue"
         component="form"
+        onSubmit={handleSubmit}
         sx={{ display: "flex", flexDirection: "column", gap: "16px" }}
       >
         <TextField
@@ -61,14 +67,15 @@ export default function CreateUser() {
           value={tokenAmount}
           onChange={(e) => setTokenAmount(e.target.value)}
         />
+        <Button
+          variant="contained"
+          className="w-full mt-5 bg-blue-500"
+          type="submit"
+        >
+          Create User
+        </Button>
       </Box>
-      <Button
-        variant="contained"
-        onClick={handleCreateUser}
-        className="w-full mt-5"
-      >
-        Create User
-      </Button>
+
       {error && (
         <Box sx={{ mt: 4 }}>
           <Typography variant="h6">Error:</Typography>
