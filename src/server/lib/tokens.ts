@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import { abi } from "@/lib/abis/DrewToken.json";
+import { abi } from "@/server/lib/abis/DrewToken.json";
 
 const provider = new ethers.JsonRpcProvider(process.env.RPC_URL);
 const address = process.env.TOKEN_CONTRACT_ADDRESS;
