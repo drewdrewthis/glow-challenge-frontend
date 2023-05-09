@@ -14,6 +14,13 @@ export async function createUser(data: { username: string }) {
   return user;
 }
 
-export function getUser(id: string) {
-  throw new Error("Function not implemented.");
+export function getUser(id: number) {
+  return prisma.user.findUnique({
+    where: {
+      id,
+    },
+    include: {
+      Wallet: true,
+    },
+  });
 }
