@@ -2,12 +2,16 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export function createUser(data: { username: string }) {
+export async function createUser(data: { username: string }) {
   console.log("createUser", data);
 
-  return prisma.user.create({
+  const user = await prisma.user.create({
     data,
   });
+
+  console.log("User created", user);
+
+  return user;
 }
 
 export function getUser(id: string) {

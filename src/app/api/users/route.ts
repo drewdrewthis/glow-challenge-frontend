@@ -1,25 +1,26 @@
 // pages/api/users/index.ts
 
 import { createUser } from "@/lib/users";
-import { generateToken } from "@/lib/tokens";
 import { NextResponse } from "next/server";
-
-type Data = {
-  user: {
-    id: number;
-    // token: string;
-  };
-};
+import { generateTokens, getBalance } from "@/lib/tokens";
+import { createWalletForUser } from "@/lib/wallets";
 
 export async function POST(req: Request) {
   console.log("POST /api/users");
 
   try {
-    const { username } = await req.json();
+    const { username, amountToGenerate } = await req.json();
     const user = await createUser({ username });
-    // const token = await generateToken(user.id);
+    console.log("User created", user);
+    const wallet = await createWalletForUser(user);
+    await generateTokens(wallet.address, amountToGenerate);
+    const balance = await getBalance(wallet.address);
 
-    return NextResponse.json({ user });
+    return NextResponse.json({
+      user,
+      address: wallet.address,
+      balance: balance.toString(),
+    });
   } catch (error) {
     console.error(error);
     return new Response(
