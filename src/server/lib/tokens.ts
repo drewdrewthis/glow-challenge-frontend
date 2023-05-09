@@ -17,12 +17,25 @@ if (!address) {
 
 const contract = new ethers.Contract(address, abi, wallet);
 
-export async function generateTokens(address: string, amount: number) {
-  const result = await contract.safeMint(address, amount);
+export async function generateTokens(
+  address: string,
+  amount: number
+): Promise<any> {
+  try {
+    const result = await contract.safeMint(address, amount);
+    console.log("Tokens generated", result);
 
-  console.log("Tokens generated", result);
-
-  return result;
+    return result;
+  } catch (error: any) {
+    // Check if the error is a nonce error
+    if (
+      error.code === -32000 &&
+      error.message.includes("the tx doesn't have the correct nonce")
+    ) {
+      // TODO: Handle nonce errors
+      throw error;
+    }
+  }
 }
 
 export async function getBalance(address: string) {
@@ -31,6 +44,18 @@ export async function getBalance(address: string) {
   return balance;
 }
 
-export function depositTokens(id: string, amount: number) {
-  throw new Error("Function not implemented.");
+export async function transferTokens(args: {
+  fromAddress: string;
+  toAddress: string;
+  amount: number;
+}) {
+  const result = await contract.transferFrom(
+    args.fromAddress,
+    args.toAddress,
+    args.amount
+  );
+
+  console.log("Tokens transferred", result, args);
+
+  return result;
 }

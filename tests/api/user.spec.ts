@@ -13,7 +13,7 @@ test.describe("POST /api/users", () => {
     const newUser = await request.post(`/api/users`, {
       data: {
         username: "Sarah",
-        amountToGenerate: 100,
+        tokenAmount: 100,
       },
     });
 
@@ -28,4 +28,38 @@ test.describe("POST /api/users", () => {
       balance: "100",
     });
   });
+});
+
+test.describe("GET /api/users/:id", () => {
+  test("should get a user and balance ", async ({ request }) => {
+    const newUser = await request
+      .post(`/api/users`, {
+        data: {
+          username: "John",
+          tokenAmount: 100,
+        },
+      })
+      .then((res) => res.json());
+
+    const user = await request.get(`/api/users/${newUser.user.id}`);
+
+    expect(user.ok()).toBeTruthy();
+
+    expect(await user.json()).toEqual({
+      user: {
+        id: expect.any(Number),
+        username: "John",
+      },
+      address: expect.any(String),
+      balance: "100",
+    });
+  });
+});
+
+// It is unclear what this is supposed to do, as this might be the same
+// as minting the tokens
+test.describe("POST /api/users/:id/deposits", () => {
+  test.skip("should transfer tokens to a users account", async ({
+    request,
+  }) => {});
 });
